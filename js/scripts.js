@@ -34,10 +34,27 @@ function Contact(firstName, lastName, phoneNumber, emailAddress, physicalAddress
   this.firstName = firstName;
   this.lastName = lastName;
   this.phoneNumber = phoneNumber;
-  this.emailAddress = emailAddress;
-  this.physicalAddress = physicalAddress;
-
+  // this.emailAddress = emailAddress || [];
+  // this.physicalAddress = physicalAddress || [];
+  this.emailAddress = { "test": emailAddress};
+  this.physicalAddress = { "test": physicalAddress};
 }
+
+//NEW JUNK
+Contact.prototype.addEmail = function(type, value) {
+  // this.emailAddress.push({ type, value });
+  if (type && value) {
+    this.emailAddress[type] = value;
+  }
+};
+
+Contact.prototype.addAddress = function(type, value) {
+  // this.physicalAddress.push({ type, value });
+  if (type && value) {
+    this.physicalAddress[type] = value;
+  }
+};
+//END NEW JUNK
 
 Contact.prototype.fullName = function() {
   return this.firstName + " " + this.lastName;
@@ -65,8 +82,22 @@ function displayContactDetails(event) {
   document.querySelector(".first-name").innerText = contact.firstName;
   document.querySelector(".last-name").innerText = contact.lastName;
   document.querySelector(".phone-number").innerText = contact.phoneNumber;
-  document.querySelector(".email").innerText = contact.emailAddress;
-  document.querySelector(".address").innerText = contact.physicalAddress;
+
+  //Loop here for email since it may contain more than one key:val pair
+  let emails = "";
+  for (let type in contact.emailAddress) {
+    emails += type + ": " + contact.emailAddress[type] + "\n";
+  }
+  document.querySelector(".email").innerText = emails;
+
+  //Same but for address
+  let addresses = ""; //init so it doesn't cry
+  for (let type in contact.physicalAddress) {
+    addresses += type + ": " + contact.physicalAddress[type] + "\n";
+  }
+  document.querySelector(".address").innerText = addresses;
+  //end address loop
+
   document.querySelector("button.delete").setAttribute("id", contact.id);
   document.querySelector("div#contact-details").removeAttribute("class");
 }
@@ -84,15 +115,28 @@ function handleFormSubmission(event) {
   const inputtedLastName = document.querySelector("input#new-last-name").value;
   const inputtedPhoneNumber = document.querySelector("input#new-phone-number").value;
   const inputtedEmail = document.querySelector("input#new-email").value;
+  const inputtedEmailAlt = document.querySelector("input#new-email-alt").value;
+  const inputtedEmailAltType = document.querySelector("input#new-email-type").value;
   const inputtedAddress = document.querySelector("input#new-address").value;
+  const inputtedAddressAlt = document.querySelector("input#new-address-alt").value;
+  const inputtedAddressAltType = document.querySelector("input#new-address-type").value;
+
   let newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber, inputtedEmail, inputtedAddress);
+
+  newContact.addEmail(inputtedEmailAltType, inputtedEmailAlt);
+  newContact.addAddress(inputtedAddressAltType, inputtedAddressAlt);
   addressBook.addContact(newContact);
+
   listContacts(addressBook);
   document.querySelector("input#new-first-name").value = null;
   document.querySelector("input#new-last-name").value = null;
   document.querySelector("input#new-phone-number").value = null;
   document.querySelector("input#new-email").value = null;
+  document.querySelector("input#new-email-alt").value = null;
+  document.querySelector("input#new-email-type").value = null;
   document.querySelector("input#new-address").value = null;
+  document.querySelector("input#new-address-alt").value = null;
+  document.querySelector("input#new-address-type").value = null;
 }
 
 window.addEventListener("load", function (){
@@ -100,3 +144,18 @@ window.addEventListener("load", function (){
   document.querySelector("div#contacts").addEventListener("click", displayContactDetails);
   document.querySelector("button.delete").addEventListener("click", handleDelete);
 });
+
+//MORE NEW JUNK
+function addEmail() {
+  const type = document.getElementById("new-email-type").value;
+  const value = document.getElementById("new-email-alt").value;
+  contact.addEmail(type, value);
+}
+
+function addAddress() {
+  const type = document.getElementById("new-address-type").value;
+  const value = document.getElementById("new-address-alt").value;
+  contact.addAddress(type, value);
+}
+//END MORE NEW JUNK
+
